@@ -4,4 +4,3 @@ matplotlib
 seaborn
 scikit-learn
 PyQt5
-PySide2
