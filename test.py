@@ -1,23 +1,43 @@
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
-# Load Iris dataset
-iris = load_iris()
-X = iris.data
-y = iris.target
+# Load the train dataset
+df_train = pd.read_csv('Datasets/train.csv')
 
-# Split data into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Split train data into X_train, Y_train
+Y_train = df_train.iloc[:, 0]  # Labels
+X_train = df_train.iloc[:, 1:]  # Features
 
-# Train SVM classifier
-svm_classifier = SVC(kernel='linear')  # You can change the kernel to 'rbf' or 'poly' for non-linear boundaries
-svm_classifier.fit(X_train, y_train)
+# Convert Pandas DataFrame to NumPy array
+X_train_np = X_train.to_numpy()
 
-# Predict classes
-y_pred = svm_classifier.predict(X_test)
+# Normalize data
+X_train_np = X_train_np / 255.0
 
-# Calculate accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
+# Perform PCA
+pca = PCA(n_components=2)  # Reduce to 2 dimensions for visualization
+X_pca = pca.fit_transform(X_train_np)
+
+# Visualize original data
+plt.figure(figsize=(12, 6))
+
+# Plot original data points
+plt.subplot(121)
+plt.scatter(X_train_np[:, 0], X_train_np[:, 1], c=Y_train, cmap='viridis', alpha=0.5)
+plt.title('Original Data Points')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.colorbar(label='Label')
+
+# Visualize PCA-transformed data
+plt.subplot(122)
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=Y_train, cmap='viridis', alpha=0.5)
+plt.title('PCA Transformed Data Points')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.colorbar(label='Label')
+
+plt.tight_layout()
+plt.show()
